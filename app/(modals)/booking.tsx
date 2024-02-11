@@ -27,10 +27,13 @@ const BookingPage = () => {
   const [selectedPlace, setSelectedPlace] = useState(0)
   const today = new Date().toISOString().substring(0, 10)
   const [groups, setGroups] = useState(guestsGroups)
+  const [searchText, setSearchText] = useState('')
 
   const onClearAll = () => {
     setSelectedPlace(0)
     setOpenCard(0)
+    setGroups(guestsGroups)
+    setSearchText('')
   }
 
   return (
@@ -57,6 +60,8 @@ const BookingPage = () => {
               <View style={styles.searchSection}>
                 <Ionicons style={styles.searchIcon} name='search' size={20} />
                 <TextInput
+                  value={searchText}
+                  onChangeText={e => setSearchText(e)}
                   style={styles.inputField}
                   placeholder='Search destination'
                   placeholderTextColor={Colors.grey}
