@@ -14,11 +14,19 @@ import DatePicker from 'react-native-modern-datepicker'
 const AnimatedTouchableOpacity =
   Animated.createAnimatedComponent(TouchableOpacity)
 
+const guestsGroups = [
+  { name: 'Adults', text: 'Ages 13 or above', count: 0 },
+  { name: 'Children', text: 'Ages 2-12', count: 0 },
+  { name: 'Infants', text: 'Under 2', count: 0 },
+  { name: 'Pets', text: 'Pets allowed', count: 0 }
+]
+
 const BookingPage = () => {
   const router = useRouter()
-  const [openCard, setOpenCard] = useState(1)
+  const [openCard, setOpenCard] = useState(0)
   const [selectedPlace, setSelectedPlace] = useState(0)
   const today = new Date().toISOString().substring(0, 10)
+  const [groups, setGroups] = useState(guestsGroups)
 
   const onClearAll = () => {
     setSelectedPlace(0)
@@ -79,10 +87,8 @@ const BookingPage = () => {
                   />
                   <Text
                     style={[
-                      { paddingTop: 6 },
-                      selectedPlace === index
-                        ? { fontFamily: 'mon-sb' }
-                        : { fontFamily: 'mon' }
+                      { fontFamily: 'mon', paddingTop: 6 },
+                      selectedPlace === index ? { fontFamily: 'mon-sb' } : null
                     ]}
                   >
                     {item.title}
@@ -147,7 +153,84 @@ const BookingPage = () => {
             <Animated.Text entering={FadeIn} style={styles.cardHeader}>
               Who's comming?
             </Animated.Text>
-            <Animated.View style={styles.cardBody}></Animated.View>
+            <Animated.View style={[styles.cardBody, { marginBottom: 20 }]}>
+              {groups.map((item, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.guestItem,
+                    index + 1 < guestsGroups.length ? styles.itemBorder : null
+                  ]}
+                >
+                  <View>
+                    <Text style={{ fontFamily: 'mon-sb', fontSize: 14 }}>
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: 'mon',
+                        fontSize: 14,
+                        color: Colors.grey
+                      }}
+                    >
+                      {item.text}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      gap: 10,
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <TouchableOpacity
+                      disabled={groups[index].count === 0}
+                      onPress={() => {
+                        const newGroups = [...groups]
+                        newGroups[index].count =
+                          newGroups[index].count > 0
+                            ? newGroups[index].count - 1
+                            : 0
+                        setGroups(newGroups)
+                      }}
+                    >
+                      <Ionicons
+                        name='remove-circle-outline'
+                        size={26}
+                        color={
+                          groups[index].count > 0 ? Colors.grey : '#cdcdcd'
+                        }
+                      />
+                    </TouchableOpacity>
+                    <Text
+                      style={{
+                        fontFamily: 'mon',
+                        fontSize: 16,
+                        textAlign: 'center',
+                        minWidth: 18
+                      }}
+                    >
+                      {item.count}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => {
+                        const newGroups = [...groups]
+                        newGroups[index].count++
+                        setGroups(newGroups)
+                      }}
+                    >
+                      <Ionicons
+                        name='add-circle-outline'
+                        size={26}
+                        color={Colors.grey}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </Animated.View>
           </>
         )}
       </View>
@@ -263,6 +346,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: Colors.grey
+  },
+  guestItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 16
+  },
+  itemBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: Colors.grey
   }
 })
 
