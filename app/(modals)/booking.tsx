@@ -26,13 +26,18 @@ const BookingPage = () => {
   const [openCard, setOpenCard] = useState(0)
   const [selectedPlace, setSelectedPlace] = useState(0)
   const today = new Date().toISOString().substring(0, 10)
-  const [groups, setGroups] = useState(guestsGroups)
+  const [groups, setGroups] = useState([...guestsGroups])
   const [searchText, setSearchText] = useState('')
 
   const onClearAll = () => {
     setSelectedPlace(0)
     setOpenCard(0)
-    setGroups(guestsGroups)
+    setGroups([
+      { name: 'Adults', text: 'Ages 13 or above', count: 0 },
+      { name: 'Children', text: 'Ages 2-12', count: 0 },
+      { name: 'Infants', text: 'Under 2', count: 0 },
+      { name: 'Pets', text: 'Pets allowed', count: 0 }
+    ])
     setSearchText('')
   }
 
@@ -164,7 +169,7 @@ const BookingPage = () => {
                   key={index}
                   style={[
                     styles.guestItem,
-                    index + 1 < guestsGroups.length ? styles.itemBorder : null
+                    index + 1 < groups.length ? styles.itemBorder : null
                   ]}
                 >
                   <View>
